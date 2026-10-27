@@ -1,3 +1,5 @@
+  
+const http = require("node:http");
 
 const {
   Client,
@@ -17,6 +19,24 @@ const {
 const { GoogleGenAI } = require("@google/genai");
 const { randomUUID } = require("node:crypto");
 const config = require("./config.json");
+
+// ==========================================
+// سيرفر HTTP الخاص بـ Render
+// ==========================================
+
+const PORT = process.env.PORT || 10000;
+
+const server = http.createServer((req, res) => {
+  res.writeHead(200, {
+    "Content-Type": "text/plain; charset=utf-8"
+  });
+
+  res.end("Discord Bot is running!");
+});
+
+server.listen(PORT, "0.0.0.0", () => {
+  console.log(`Web server listening on port ${PORT}`);
+});
 
 // ==========================================
 // الإعدادات
@@ -72,6 +92,7 @@ for (const key of [
 
 function truncate(value, max = 1000) {
   const text = String(value ?? "");
+
   return text.length <= max
     ? text
     : text.slice(0, max - 20) + "\n... تم اختصار النص";
@@ -821,8 +842,6 @@ const commands = [
 
 client.on("interactionCreate", async interaction => {
   try {
-    // لا نسجّل كل الأوامر عشوائيًا؛ نسجّل تفاعلات البوت أدناه.
-
     // أزرار التأكيد والإلغاء
     if (interaction.isButton()) {
       const [kind, actionId] = interaction.customId.split(":");
